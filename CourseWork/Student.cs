@@ -14,19 +14,21 @@ namespace CourseWork
 {
     public partial class Student : Form
     {
-        BD Connection;
+        BDService Connection;
+        StudentService studentService;
         List<Lesson> lessons;
-        public Student(FromAuthorization autho, BD Connection)
+        public Student(FromAuthorization autho, BDService Connection)
         {
+            studentService = new StudentService();
             this.Connection = Connection;
             autho.Hide();
             InitializeComponent();
-            label8.Text = Connection.student.surname + ' ' + Connection.student.name + ' ' + Connection.student.patronymic;
-            label14.Text = Connection.student.login;
-            label16.Text = Connection.student.name_group;
-            label18.Text = Connection.student.category;
-            label9.Text = Connection.student.date_birth;
-            label20.Text = Connection.student.phone_number;
+            label8.Text = Connection.GetStudent().surname + ' ' + Connection.GetStudent().name + ' ' + Connection.GetStudent().patronymic;
+            label14.Text = Connection.GetStudent().login;
+            label16.Text = Connection.GetStudent().name_group;
+            label18.Text = Connection.GetStudent().category;
+            label9.Text = Connection.GetStudent().date_birth;
+            label20.Text = Connection.GetStudent().phone_number;
 
             comboBox1.DataSource = Connection.AllInstructors();
 
@@ -35,6 +37,15 @@ namespace CourseWork
             comboBox1.ValueMember = "id_instructor";
 
 
+        }
+
+        private void CenterControlInPanel(Control control, Control container, Control image)
+        {
+            
+            int x = (container.ClientSize.Width - control.Width) / 2;
+            int y = (container.ClientSize.Height- control.Height) - image.Height - 100;
+            //int y = (container.ClientSize.Height - control.Height) / 2;
+            control.Location = new Point(x, y);
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -71,16 +82,8 @@ namespace CourseWork
         private void button1_Click(object sender, EventArgs e)
         {
             Lesson lesson = (Lesson)comboBox2.SelectedItem;
-           
-            if(Connection.UpdateLesson(lesson.id_lesson, Connection.student.id_student))
-            {
-                MessageBox.Show("Запись создана", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else
-            {
-                MessageBox.Show("Запись уже существует", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
 
+            studentService.LessonConfirmation(Connection.UpdateLesson(lesson.id_lesson, Connection.GetStudent().id_student));
         }
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
@@ -101,6 +104,12 @@ namespace CourseWork
             comboBox2.DisplayMember = "time";
 
             comboBox2.ValueMember = "time";
+        }
+
+        private void Student_SizeChanged(object sender, EventArgs e)
+        {
+            CenterControlInPanel(panel1, this, pictureBox1);
+            CenterControlInPanel(panel2, this, button1);
         }
     }
 }

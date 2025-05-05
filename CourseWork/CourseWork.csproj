@@ -95,6 +95,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuhtoService.cs" />
     <Compile Include="Autho.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -102,7 +103,9 @@
       <DependentUpon>Autho.cs</DependentUpon>
     </Compile>
     <Compile Include="BD.cs" />
+    <Compile Include="BDService.cs" />
     <Compile Include="InfStudent.cs" />
+    <Compile Include="InstructionService.cs" />
     <Compile Include="Instructors.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -120,6 +123,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StudentClass.cs" />
+    <Compile Include="StudentService.cs" />
     <Compile Include="User.cs" />
     <EmbeddedResource Include="Autho.resx">
       <DependentUpon>Autho.cs</DependentUpon>

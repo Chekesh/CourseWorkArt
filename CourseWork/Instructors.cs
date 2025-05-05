@@ -14,19 +14,21 @@ namespace CourseWork
 {
     public partial class Instructors : Form
     {
-        BD Connection;
+        BDService Connection;
+        InstructionService instructionService;
 
         List<InfStudent> infStudent;
-        public Instructors(FromAuthorization autho, BD Connection)
+        public Instructors(FromAuthorization autho, BDService Connection)
         {
+            instructionService = new InstructionService();
             this.Connection = Connection;
             InitializeComponent();
             autho.Hide();
-            label2.Text = Connection.instructor.surname + ' ' + Connection.instructor.name + ' ' + Connection.instructor.patronymic;
-            label5.Text = Connection.instructor.experience;
-            label6.Text = Connection.instructor.car;
-            label23.Text = Connection.instructor.car_number;
-            label21.Text = Connection.instructor.phone_number;
+            label2.Text = Connection.GetInstructor().surname + ' ' + Connection.GetInstructor().name + ' ' + Connection.GetInstructor().patronymic;
+            label5.Text = Connection.GetInstructor().experience;
+            label6.Text = Connection.GetInstructor().car;
+            label23.Text = Connection.GetInstructor().car_number;
+            label21.Text = Connection.GetInstructor().phone_number;
 
             comboBox3.DataSource = new List<string>
             {
@@ -49,6 +51,26 @@ namespace CourseWork
             List<string> dateList = infStudent.Select(s => s.lesson.date).Distinct().ToList();
 
             comboBox4.DataSource = dateList;
+
+            Connection.SelectLesson(dataGridView1, Connection.GetInstructor().id_instructor);
+        }
+
+        private void CenterControlInPanel(Control control, Control container)
+        {
+
+            int x = (container.ClientSize.Width - control.Width) / 2;
+            //int y = (container.ClientSize.Height - control.Height) - image.Height - 100;
+            int y = (container.ClientSize.Height - control.Height) / 2;
+            control.Location = new Point(x, y);
+        }
+
+        private void CenterControlInPanel(Control control, Control container, Control table)
+        {
+
+            int x = (container.ClientSize.Width - control.Width) / 2;
+            int y = (container.ClientSize.Height - control.Height) - table.Height - 100;
+            //int y = (container.ClientSize.Height - control.Height) / 2;
+            control.Location = new Point(x, y);
         }
 
         private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
@@ -69,24 +91,20 @@ namespace CourseWork
             label15.Text = selectedStudent.student.surname;
             label16.Text = selectedStudent.student.name;
             label17.Text = selectedStudent.student.patronymic;
-            label18.Text = selectedStudent.student.patronymic;
+            label18.Text = selectedStudent.student.category;
             label19.Text = selectedStudent.student.name_group;
             label20.Text = selectedStudent.student.phone_number;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string selectedDate = comboBox3.SelectedItem as string;
-            string selectedTime = comboBox1.SelectedItem as string;
-            if(Connection.CreateLess(Connection.instructor.id_instructor, comboBox3.SelectedItem as string, comboBox1.SelectedItem as string))
-            {
-                MessageBox.Show("Запись создана", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else
-            {
-                MessageBox.Show("Запись уже существует", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            instructionService.Confirmation(Connection.CreateLess(Connection.GetInstructor().id_instructor, comboBox3.SelectedItem as string, comboBox1.SelectedItem as string));
+        }
 
+        private void Instructors_SizeChanged(object sender, EventArgs e)
+        {
+            CenterControlInPanel(panel1, this);
+            CenterControlInPanel(panel2, this, dataGridView1);
         }
     }
 }

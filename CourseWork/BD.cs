@@ -6,10 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.NetworkInformation;
 using System.Drawing;
+using System.Data;
+using System.Windows.Forms;
 
 namespace CourseWork
 {
-    public class BD
+    public class BD : BDService
     {
         string connectString = "Host=localhost;Username=postgres;Password=1234;Database=Professional";
 
@@ -38,6 +40,33 @@ namespace CourseWork
             finally
             {
                 Console.Read();
+            }
+        }
+
+        public InstructorsClass GetInstructor()
+        {
+            return instructor;
+        }
+
+        public StudentClass GetStudent()
+        {
+            return student;
+        }
+
+        public void SelectLesson(DataGridView dt, int instructor)
+        {
+
+            //using (var cmd = new NpgsqlCommand("SELECT fio AS \"ФИО\", id_contract AS \"Номер договора\", pers_acc AS \"Лицевой счёт\", services AS \"Услуги\" FROM support_users", conn))
+            using (var cmd = new NpgsqlCommand("SELECT users.nam AS \"Имя\", users.surname AS \"Фамилия\", users.patronymic AS \"Отчество\", users.phone_number AS \"Номер телефона\", students.category AS \"Категория\", students.name_group AS \"Группа\", lessons.date AS \"Дата\", lessons.lesson_time AS \"Время\" FROM lessons INNER JOIN students ON lessons.id_student = students.id_student INNER JOIN users ON users.id_user = students.id_user WHERE lessons.id_instructor = @instructor", connect))
+            {
+
+                cmd.Parameters.AddWithValue("instructor", instructor);
+                using (var reader = cmd.ExecuteReader())
+                {
+                    DataTable dataTable = new DataTable();
+                    dataTable.Load(reader);
+                    dt.DataSource = dataTable;
+                }
             }
         }
 

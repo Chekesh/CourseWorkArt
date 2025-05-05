@@ -14,9 +14,10 @@ namespace CourseWork
         [STAThread]
         static void Main()
         {
+            BD bD = new BD();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FromAuthorization());
+            Application.Run(new FromAuthorization(bD));
         }
     }
 }
